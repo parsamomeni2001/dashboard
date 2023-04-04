@@ -1,25 +1,37 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 const Stats = () => {
-    const [event, setEvent] = useState([])
+  const [statuses, setStatuses] = useState({
+    receiver: '',
+    storage: '',
+    processing: ''
+  });
 
-    useEffect(() => {
-        fetch('http://localhost:8100/stats')
-        .then(res => res.json())
-        .then(res => { 
-            setEvent(res) 
-        })
-    }, [])
+  useEffect(() => {
+    fetch('http://localhost:8110/check')
+      .then(res => res.json())
+      .then(data => setStatuses(data))
+      .catch(error => console.error(error));
+  }, []);
 
-    return (
-        <div className="stats">
-            <h2>Latest Statistics</h2>
-            <div>
-                <p>Max Buy Price: ${event.max_buy_price}</p>
-                {/* output stats here */}
-            </div>
-        </div>
-    )   
-}
+  const handleClick = () => {
+    fetch('http://localhost:8110/check')
+      .then(res => res.json())
+      .then(data => setStatuses(data))
+      .catch(error => console.error(error));
+  };
 
-export default Stats
+  return (
+    <div className="stats">
+      <h2>Latest Statistics</h2>
+      <div>
+        <p>Receiver: {statuses.receiver}</p>
+        <p>Storage: {statuses.storage}</p>
+        <p>Processing: {statuses.processing}</p>
+      </div>
+      <button onClick={handleClick}>Check Statuses</button>
+    </div>
+  );
+};
+
+export default Stats;
